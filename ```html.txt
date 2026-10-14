@@ -1,0 +1,310 @@
+```html
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>चौरसिया ग्राहक सेवा केंद्र गदागंज | ऑनलाइन प्रिंट सेवा</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js Library CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ea580c',
+                            blue: '#1d4ed8',
+                            emerald: '#059669',
+                            dark: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        hindi: ['Hind', 'Poppins', 'sans-serif'],
+                        sans: ['Poppins', 'Hind', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', 'Hind', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+    <header class="no-print bg-gradient-to-r from-orange-600 via-amber-600 to-blue-800 text-white shadow-md sticky top-0 z-40">
+        <!-- Top Quick Bar -->
+        <div class="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-medium border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-white mr-1.5 animate-ping"></span> प्रिंटर चालू है
+                </span>
+                <span class="hidden sm:inline-block text-white/90">📍 गदागंज (Gadaganj)</span>
+            </div>
+
+            <!-- Direct Calling & Shopkeeper Tab -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="tel:919918224085" class="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full text-white text-xs font-bold transition">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>9918224085</span>
+                </a>
+                
+                <button type="button" onclick="openShopQrModal()" class="flex items-center gap-1.5 bg-amber-400 text-slate-900 hover:bg-amber-300 px-3 py-1 rounded-full text-xs font-bold transition shadow-sm" title="दुकान का क्यूआर कोड">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span class="hidden sm:inline">दुकान QR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Shop Title and View Mode Switcher -->
+        <div class="max-w-5xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white p-2 shadow-md flex items-center justify-center text-orange-600 font-black text-2xl flex-shrink-0">
+                    <i class="fa-solid fa-print"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-white leading-tight font-hindi">
+                        चौरसिया ग्राहक सेवा केंद्र
+                    </h1>
+                    <p class="text-xs sm:text-sm text-amber-200 font-medium">
+                        गदागंज (Gadaganj) • बिना लाइन लगे तत्काल प्रिंट करवाएं
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tabs: Customer vs Shopkeeper View -->
+            <div class="inline-flex p-1 bg-black/25 rounded-2xl border border-white/20 backdrop-blur-sm self-start sm:self-auto">
+                <button id="navCustomerBtn" onclick="switchView('customer')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-blue-900 shadow">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    <span>ग्राहक (Upload)</span>
+                </button>
+                <button id="navShopkeeperBtn" onclick="switchView('shopkeeper')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 text-white/90 hover:text-white">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>दुकानदार डैशबोर्ड</span>
+                    <span id="queueBadge" class="ml-1 bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- ========================================== -->
+        <!-- 1. CUSTOMER VIEW: FILE UPLOAD & PRINT OPTS -->
+        <!-- ========================================== -->
+        <section id="customerViewSection" class="space-y-5">
+            <!-- Step Banner -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fa-solid fa-upload"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 font-hindi">
+                            फाइल अपलोड करें ➔ टोकन प्राप्त करें
+                        </h2>
+                        <p class="text-xs text-slate-500">
+                            व्हाट्सएप की जरूरत नहीं! फाइल सीधे दुकानदार के प्रिंटर कंप्यूटर पर पहुंच जाएगी।
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="openShopQrModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-qrcode text-base text-amber-700"></i>
+                        <span>दुकान का QR कोड देखें</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-7 space-y-6">
+                <!-- 1. File Upload Dropzone -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold">1</span>
+                            PDF या फोटो सिलेक्ट करें (Upload Files)
+                        </label>
+                        <span class="text-xs text-slate-400 font-medium">PDF, JPG, PNG, Docs</span>
+                    </div>
+
+                    <div id="dropZone" class="border-2 border-dashed border-blue-300 hover:border-blue-600 rounded-2xl p-6 sm:p-10 text-center bg-blue-50/40 hover:bg-blue-50 transition cursor-pointer relative group">
+                        <input type="file" id="fileInput" multiple accept=".pdf,image/png,image/jpeg,image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center gap-2 pointer-events-none">
+                            <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-600 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
+                            </div>
+                            <p class="text-base font-bold text-slate-800">
+                                यहाँ क्लिक करें या फाइल ड्रैग करें
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                आप एक साथ एक या एक से अधिक फोटो/PDF चुन सकते हैं
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Selected Files Previews & Count -->
+                    <div id="fileListContainer" class="space-y-2 hidden pt-3">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-600 px-1">
+                            <span>चुनी गई फाइलें (<span id="fileCountBadge" class="text-blue-700 font-bold">0</span>)</span>
+                            <button type="button" id="clearAllFilesBtn" class="text-rose-600 hover:underline">
+                                <i class="fa-solid fa-trash-can mr-1"></i>सभी हटाएं
+                            </button>
+                        </div>
+                        <div id="fileItemsList" class="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scroll">
+                            <!-- Dynamic items inserted via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Print Settings (No Customer Details, No Price) -->
+                <div class="border-t border-slate-100 pt-6 space-y-4">
+                    <label class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold">2</span>
+                        प्रिंट सेटिंग्स (Print Settings)
+                    </label>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- Color Option -->
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                            <span class="text-xs font-bold text-slate-600 block">प्रिंट रंग (Color Option):</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-white border border-slate-300 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 shadow-sm transition">
+                                    <input type="radio" name="colorOption" value="Black & White (काली व सफेद)" checked class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-xs font-bold text-slate-800">Black & White</span>
+                                </label>
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-white border border-slate-300 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 shadow-sm transition">
+                                    <input type="radio" name="colorOption" value="रंगीन (Color Print)" class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-xs font-bold text-slate-800">रंगीन (Color)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Single / Double Side -->
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                            <span class="text-xs font-bold text-slate-600 block">साइड (Sides):</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-white border border-slate-300 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 shadow-sm transition">
+                                    <input type="radio" name="sideOption" value="एक तरफ (Single Side)" checked class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-xs font-bold text-slate-800">एक तरफ (Single)</span>
+                                </label>
+                                <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-white border border-slate-300 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 shadow-sm transition">
+                                    <input type="radio" name="sideOption" value="दोनों तरफ (Both Sides)" class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-xs font-bold text-slate-800">दोनों तरफ (Double)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Paper Size -->
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                            <span class="text-xs font-bold text-slate-600 block">कागज का आकार (Paper Size):</span>
+                            <select id="paperSizeSelect" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                <option value="A4 सामान्य कागज (Standard A4)">A4 सामान्य पेपर (Standard)</option>
+                                <option value="Legal / कचहरी साइज (Legal Paper)">Legal साइज (कचहरी/दस्तावेज)</option>
+                                <option value="पासपोर्ट साइज फोटो (Passport Size Photo)">पासपोर्ट साइज फोटो (Passport Size)</option>
+                                <option value="Glossy Photo Paper (हाई क्वालिटी फोटो)">Glossy फोटो पेपर (High Quality Photo)</option>
+                            </select>
+                        </div>
+
+                        <!-- Number of Copies -->
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                            <span class="text-xs font-bold text-slate-600 block">कॉपियां (Copies):</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="adjustCopies(-1)" class="w-11 h-10 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 hover:bg-slate-100 flex items-center justify-center shadow-sm text-lg">
+                                    -
+                                </button>
+                                <input type="number" id="copiesCount" value="1" min="1" max="100" readonly class="flex-grow h-10 bg-white border border-slate-300 rounded-xl text-center font-bold text-sm text-slate-800 shadow-sm">
+                                <button type="button" onclick="adjustCopies(1)" class="w-11 h-10 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 hover:bg-slate-100 flex items-center justify-center shadow-sm text-lg">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Note (Optional) -->
+                    <div class="space-y-1.5 pt-1">
+                        <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i class="fa-regular fa-comment-dots text-orange-500"></i>
+                            प्रिंट के लिए कोई निर्देश (वैकल्पिक / Optional Note):
+                        </label>
+                        <input type="text" id="specialNotes" placeholder="उदा. केवल पहला पेज प्रिंट करें, या डार्क प्रिंट करें, आदि..." class="w-full px-4 py-2.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Cash Notice -->
+                <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 text-lg shadow-sm">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div class="text-xs">
+                        <p class="font-bold text-emerald-900 font-hindi">भुगतान: दुकान पर नकद (Cash at Shop)</p>
+                        <p class="text-emerald-700">ऑनलाइन भुगतान की आवश्यकता नहीं है। प्रिंट प्राप्त करते समय नकद भुगतान करें।</p>
+                    </div>
+                </div>
+
+                <!-- Submit Button (Direct Web Dispatch - NO WhatsApp) -->
+                <div class="space-y-2 pt-2">
+                    <button type="button" id="submitOrderBtn" onclick="handleCustomerSubmit()" class="w-full py-4 bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 hover:from-blue-800 hover:to-indigo-950 text-white rounded-2xl font-bold text-base shadow-xl shadow-blue-700/20 transition flex items-center justify-center gap-2 transform active:scale-[0.98]">
+                        <i class="fa-solid fa-paper-plane text-lg"></i>
+                        प्रिंट के लिए भेजें (Send for Print)
+                    </button>
+                    <p id="validationMsg" class="text-xs text-rose-600 font-bold text-center hidden"></p>
+                </div>
+            </div>
+
+            <!-- Shop Info Card -->
+            <div class="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-3xl p-5 sm:p-6 shadow-sm space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <div>
+                        <h3 class="font-bold text-base sm:text-lg">चौरसिया ग्राहक सेवा केंद्र गदागंज</h3>
+                        <p class="text-xs text-slate-300">दुकान पर सहायता या जानकारी हेतु संपर्क करें</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="tel:919918224085" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold flex items-center gap-2 transition">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>9918224085</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                    💡 <strong>टिप:</strong> आप दुकान के काउंटर पर लगे QR कोड को स्कैन करके सीधे अपने मोबाइल से फोटो या फॉर्म का पीडीएफ भेज सकते हैं।
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 2. SHOPKEEPER DASHBOARD (दुकानदार डैशबोर्ड)
